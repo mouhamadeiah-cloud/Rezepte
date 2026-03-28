@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Gruppen verwalten - Die Primel Eiscafé</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a3a1a">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span>🍨</span> Die Primel Eiscafé
+        </div>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <button class="close-app-btn" id="closeAppBtn" style="display: none;">✕ Schließen</button>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="index.html">
+                <span>🏠</span> Startseite
+            </a>
+            <a href="admin-groups.html" class="active">
+                <span>📁</span> Gruppen verwalten
+            </a>
+            <a href="admin-dishes.html">
+                <span>🍽️</span> Gerichte verwalten
+            </a>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="page-header">
+                <h1>📁 Gruppen verwalten</h1>
+                <p>Kategorien für Ihre Rezepte erstellen und bearbeiten</p>
+            </div>
+            
+            <div class="form-card">
+                <h3>➕ Neue Gruppe</h3>
+                <div class="form-group">
+                    <label>Gruppenname</label>
+                    <input type="text" id="groupName" placeholder="z.B. Eiscreme, Kuchen, Heißgetränke">
+                </div>
+                <button class="btn-primary" id="addGroupBtn">+ Gruppe hinzufügen</button>
+            </div>
+            
+            <div class="form-card" id="editGroupCard" style="display: none;">
+                <h3>✏️ Gruppe bearbeiten</h3>
+                <div class="form-group">
+                    <label>Gruppenname</label>
+                    <input type="text" id="editGroupName">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-primary" id="saveGroupEditBtn" style="flex: 1;">💾 Speichern</button>
+                    <button class="btn-secondary" id="cancelGroupEditBtn" style="flex: 1;">❌ Abbrechen</button>
+                </div>
+            </div>
+            
+            <div id="groupsList" class="items-list"></div>
+        </div>
+    </div>
+
+    <script src="admin-groups.js"></script>
+    <script>
+        const closeAppBtn = document.getElementById('closeAppBtn');
+        if (closeAppBtn) {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                closeAppBtn.style.display = 'flex';
+            }
+            closeAppBtn.addEventListener('click', () => {
+                window.close();
+                if (navigator.app && navigator.app.exitApp) navigator.app.exitApp();
+            });
+        }
+    </script>
+</body>
+</html>

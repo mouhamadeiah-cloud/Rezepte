@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerichte verwalten - Die Primel Eiscafé</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ff9a9e">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span>🍨</span> Die Primel Eiscafé
+        </div>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <button class="close-app-btn" id="closeAppBtn" style="display: none;">✕ Schließen</button>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="index.html">
+                <span>🏠</span> Startseite
+            </a>
+            <a href="admin-groups.html">
+                <span>📁</span> Gruppen verwalten
+            </a>
+            <a href="admin-dishes.html" class="active">
+                <span>🍽️</span> Gerichte verwalten
+            </a>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="page-header">
+                <h1>🍽️ Gerichte verwalten</h1>
+                <p>Rezepte zu Ihren Kategorien hinzufügen</p>
+            </div>
+            
+            <!-- Formular zum Hinzufügen -->
+            <div class="form-card">
+                <h3>➕ Neues Gericht</h3>
+                <div class="form-group">
+                    <label>Kategorie</label>
+                    <select id="dishGroupSelect">
+                        <option value="">Bitte wählen</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gerichtename</label>
+                    <input type="text" id="dishName" placeholder="z.B. Stracciatella-Eis">
+                </div>
+                <div class="form-group">
+                    <label>Bildpfad (optional)</label>
+                    <input type="text" id="dishImage" placeholder="z.B. images/stracciatella.jpg">
+                    <small>Legen Sie Bilder im Ordner "images" ab</small>
+                </div>
+                <div class="form-group">
+                    <label>Rezept</label>
+                    <textarea id="dishRecipe" rows="6" placeholder="Zutaten und Zubereitung..."></textarea>
+                </div>
+                <button class="btn-primary" id="addDishBtn">+ Gericht hinzufügen</button>
+            </div>
+            
+            <!-- Formular zum Bearbeiten (يظهر عند اختيار طبق) -->
+            <div class="form-card" id="editDishCard" style="display: none;">
+                <h3>✏️ Gericht bearbeiten</h3>
+                <div class="form-group">
+                    <label>Kategorie</label>
+                    <select id="editDishGroupSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label>Gerichtename</label>
+                    <input type="text" id="editDishName">
+                </div>
+                <div class="form-group">
+                    <label>Bildpfad (optional)</label>
+                    <input type="text" id="editDishImage">
+                </div>
+                <div class="form-group">
+                    <label>Rezept</label>
+                    <textarea id="editDishRecipe" rows="6"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-primary" id="saveDishEditBtn" style="flex: 1;">💾 Speichern</button>
+                    <button class="btn-secondary" id="cancelDishEditBtn" style="flex: 1;">❌ Abbrechen</button>
+                </div>
+            </div>
+            
+            <!-- قائمة الأطباق -->
+            <div id="dishesList" class="items-list"></div>
+        </div>
+    </div>
+
+    <script src="admin-dishes.js"></script>
+    <script>
+        const closeAppBtn = document.getElementById('closeAppBtn');
+        if (closeAppBtn) {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                closeAppBtn.style.display = 'flex';
+            }
+            closeAppBtn.addEventListener('click', () => {
+                window.close();
+                if (navigator.app && navigator.app.exitApp) navigator.app.exitApp();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Die Primel Eiscafé - Rezepte</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Primel Rezepte">
+    <link rel="apple-touch-icon" href="icons/apple-icon-180x180.png">
+    <meta name="theme-color" content="#1a3a1a">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span>🍨</span> Die Primel Eiscafé
+        </div>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <button class="close-app-btn" id="closeAppBtn" style="display: none;">✕ Schließen</button>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="index.html" class="active">
+                <span>🏠</span> Startseite
+            </a>
+            <a href="admin-groups.html">
+                <span>📁</span> Gruppen verwalten
+            </a>
+            <a href="admin-dishes.html">
+                <span>🍽️</span> Gerichte verwalten
+            </a>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main-layout">
+        <!-- Groups Sidebar - Left -->
+        <aside class="groups-sidebar">
+            <h3>📁 Kategorien</h3>
+            <div id="groupsList" class="groups-list"></div>
+        </aside>
+
+        <!-- Content Area - Right -->
+        <main class="content-area">
+            <div class="content-header">
+                <h2 id="categoryTitle">Willkommen</h2>
+                <p id="categoryDescription">Wählen Sie eine Kategorie aus, um die Rezepte anzuzeigen</p>
+            </div>
+            <div id="dishesContainer" class="dishes-grid"></div>
+        </main>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn">✕</button>
+            <div class="modal-image-section">
+                <img id="modalImage" class="modal-image" src="" alt="Gericht">
+            </div>
+            <div class="modal-recipe-section">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <p id="modalRecipe" class="modal-recipe"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const closeAppBtn = document.getElementById('closeAppBtn');
+        if (closeAppBtn) {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                closeAppBtn.style.display = 'flex';
+            }
+            closeAppBtn.addEventListener('click', () => {
+                window.close();
+                if (navigator.app && navigator.app.exitApp) navigator.app.exitApp();
+            });
+        }
+    </script>
+</body>
+</html>
