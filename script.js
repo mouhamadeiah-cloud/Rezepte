@@ -267,7 +267,7 @@ if ('serviceWorker' in navigator) {
                 console.log('Service Worker Registrierung fehlgeschlagen:', error);
             });
     });
-}
+
 
 // ============================================
 // Initialize
@@ -276,3 +276,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGroups();
     renderDishes();
 });
+}
