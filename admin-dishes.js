@@ -1,259 +1,125 @@
-// ============================================
-// Load Data
-// ============================================
-let appData = JSON.parse(localStorage.getItem('diePrimelData'));
-if (!appData) {
-    appData = {
-        groups: [],
-        dishes: []
-    };
-    localStorage.setItem('diePrimelData', JSON.stringify(appData));
-}
-
-let nextDishId = appData.dishes.length > 0 ? Math.max(...appData.dishes.map(d => d.id)) + 1 : 1;
-
-// ============================================
-// Sidebar Functions
-// ============================================
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-function openSidebar() {
-    sidebar.classList.add('active');
-    sidebarOverlay.classList.add('active');
-}
-
-function closeSidebar() {
-    sidebar.classList.remove('active');
-    sidebarOverlay.classList.remove('active');
-}
-
-if (hamburgerBtn) {
-    hamburgerBtn.addEventListener('click', openSidebar);
-}
-if (sidebarOverlay) {
-    sidebarOverlay.addEventListener('click', closeSidebar);
-}
-
-document.querySelectorAll('.sidebar-nav a').forEach(link => {
-    link.addEventListener('click', closeSidebar);
-});
-
-// ============================================
-// Save Data
-// ============================================
-function saveData() {
-    localStorage.setItem('diePrimelData', JSON.stringify(appData));
-    renderDishesList();
-    updateGroupSelect();
-    updateEditGroupSelect();
-}
-
-// ============================================
-// Update Group Selects
-// ============================================
-function updateGroupSelect() {
-    const select = document.getElementById('dishGroupSelect');
-    if (select) {
-        select.innerHTML = '<option value="">Bitte wählen</option>' + 
-            appData.groups.map(group => `<option value="${group.id}">${escapeHtml(group.name)}</option>`).join('');
-    }
-}
-
-function updateEditGroupSelect() {
-    const select = document.getElementById('editDishGroupSelect');
-    if (select) {
-        select.innerHTML = '<option value="">Bitte wählen</option>' + 
-            appData.groups.map(group => `<option value="${group.id}">${escapeHtml(group.name)}</option>`).join('');
-    }
-}
-
-// ============================================
-// Render Dishes List
-// ============================================
-function renderDishesList() {
-    const container = document.getElementById('dishesList');
-    if (!container) return;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerichte verwalten - Die Primel Eiscafé</title>
+    <link rel="stylesheet" href="style.css">
     
-    if (!appData.dishes.length) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="icon">📭</div>
-                <p>Keine Gerichte vorhanden</p>
-                <small>Fügen Sie Ihr erstes Rezept hinzu</small>
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ff9a9e">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span>🍨</span> Die Primel Eiscafé
+        </div>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <button class="close-app-btn" id="closeAppBtn" style="display: none;">✕ Schließen</button>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <a href="index.html">
+                <span>🏠</span> Startseite
+            </a>
+            <a href="admin-groups.html">
+                <span>📁</span> Gruppen verwalten
+            </a>
+            <a href="admin-dishes.html" class="active">
+                <span>🍽️</span> Gerichte verwalten
+            </a>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="page-header">
+                <h1>🍽️ Gerichte verwalten</h1>
+                <p>Rezepte zu Ihren Kategorien hinzufügen</p>
             </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = appData.dishes.map(dish => {
-        const groupName = appData.groups.find(g => g.id === dish.groupId)?.name || 'Keine Gruppe';
-        return `
-            <div class="item" data-id="${dish.id}">
-                <div class="item-info">
-                    <strong>${escapeHtml(dish.name)}</strong>
-                    <small>Kategorie: ${escapeHtml(groupName)}</small>
-                    ${dish.image ? `<small>Bild: ${dish.image}</small>` : ''}
+            
+            <!-- Formular zum Hinzufügen -->
+            <div class="form-card">
+                <h3>➕ Neues Gericht</h3>
+                <div class="form-group">
+                    <label>Kategorie</label>
+                    <select id="dishGroupSelect">
+                        <option value="">Bitte wählen</option>
+                    </select>
                 </div>
-                <div class="item-actions">
-                    <button class="edit-btn" onclick="editDish(${dish.id})">✏️ Bearbeiten</button>
-                    <button class="delete-btn" onclick="deleteDish(${dish.id})">🗑️ Löschen</button>
+                <div class="form-group">
+                    <label>Gerichtename</label>
+                    <input type="text" id="dishName" placeholder="z.B. Stracciatella-Eis">
+                </div>
+<div class="form-group">
+    <label>Bildpfad (optional)</label>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <input type="text" id="dishImage" placeholder="z.B. images/stracciatella.jpg" style="flex: 1;">
+        <button type="button" class="btn-secondary" id="selectImageBtn" style="padding: 12px 16px;">📁 Auswählen</button>
+    </div>
+    <small>Klicken Sie auf "Auswählen", um ein Bild vom Gerät auszuwählen</small>
+</div>
+                <div class="form-group">
+                    <label>Rezept</label>
+                    <textarea id="dishRecipe" rows="6" placeholder="Zutaten und Zubereitung..."></textarea>
+                </div>
+                <button class="btn-primary" id="addDishBtn">+ Gericht hinzufügen</button>
+            </div>
+
+            
+            <!-- Formular zum Bearbeiten (يظهر عند اختيار طبق) -->
+            <div class="form-card" id="editDishCard" style="display: none;">
+                <h3>✏️ Gericht bearbeiten</h3>
+                <div class="form-group">
+                    <label>Kategorie</label>
+                    <select id="editDishGroupSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label>Gerichtename</label>
+                    <input type="text" id="editDishName">
+                </div>
+<div class="form-group">
+    <label>Bildpfad (optional)</label>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <input type="text" id="editDishImage" style="flex: 1;">
+        <button type="button" class="btn-secondary" id="editSelectImageBtn" style="padding: 12px 16px;">📁 Auswählen</button>
+    </div>
+</div>
+                <div class="form-group">
+                    <label>Rezept</label>
+                    <textarea id="editDishRecipe" rows="6"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-primary" id="saveDishEditBtn" style="flex: 1;">💾 Speichern</button>
+                    <button class="btn-secondary" id="cancelDishEditBtn" style="flex: 1;">❌ Abbrechen</button>
                 </div>
             </div>
-        `;
-    }).join('');
-}
+            
+            <!-- قائمة الأطباق -->
+            <div id="dishesList" class="items-list"></div>
+        </div>
+    </div>
 
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// ============================================
-// Add Dish
-// ============================================
-const addDishBtn = document.getElementById('addDishBtn');
-if (addDishBtn) {
-    addDishBtn.addEventListener('click', () => {
-        const groupId = parseInt(document.getElementById('dishGroupSelect').value);
-        const dishName = document.getElementById('dishName').value.trim();
-        const dishImage = document.getElementById('dishImage').value.trim();
-        const dishRecipe = document.getElementById('dishRecipe').value.trim();
-        
-        if (!groupId) {
-            alert('Bitte wählen Sie eine Kategorie');
-            return;
+    <script src="admin-dishes.js"></script>
+    <script>
+        const closeAppBtn = document.getElementById('closeAppBtn');
+        if (closeAppBtn) {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                closeAppBtn.style.display = 'flex';
+            }
+            closeAppBtn.addEventListener('click', () => {
+                window.close();
+                if (navigator.app && navigator.app.exitApp) navigator.app.exitApp();
+            });
         }
-        
-        if (!dishName) {
-            alert('Bitte geben Sie einen Gerichtenamen ein');
-            return;
-        }
-        
-        if (!dishRecipe) {
-            alert('Bitte geben Sie das Rezept ein');
-            return;
-        }
-        
-        appData.dishes.push({
-            id: nextDishId++,
-            name: dishName,
-            groupId: groupId,
-            image: dishImage,
-            recipe: dishRecipe
-        });
-        
-        document.getElementById('dishName').value = '';
-        document.getElementById('dishImage').value = '';
-        document.getElementById('dishRecipe').value = '';
-        
-        saveData();
-    });
-}
-
-// ============================================
-// Edit Dish
-// ============================================
-let currentEditDishId = null;
-
-window.editDish = function(id) {
-    const dish = appData.dishes.find(d => d.id === id);
-    if (!dish) return;
-    
-    currentEditDishId = id;
-    
-    const editCard = document.getElementById('editDishCard');
-    const editGroupSelect = document.getElementById('editDishGroupSelect');
-    const editNameInput = document.getElementById('editDishName');
-    const editImageInput = document.getElementById('editDishImage');
-    const editRecipeInput = document.getElementById('editDishRecipe');
-    
-    if (editCard && editGroupSelect && editNameInput && editImageInput && editRecipeInput) {
-        editGroupSelect.value = dish.groupId;
-        editNameInput.value = dish.name;
-        editImageInput.value = dish.image || '';
-        editRecipeInput.value = dish.recipe || '';
-        editCard.style.display = 'block';
-        editCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-};
-
-const saveDishEditBtn = document.getElementById('saveDishEditBtn');
-if (saveDishEditBtn) {
-    saveDishEditBtn.addEventListener('click', () => {
-        const newGroupId = parseInt(document.getElementById('editDishGroupSelect').value);
-        const newName = document.getElementById('editDishName').value.trim();
-        const newImage = document.getElementById('editDishImage').value.trim();
-        const newRecipe = document.getElementById('editDishRecipe').value.trim();
-        
-        if (!newGroupId) {
-            alert('Bitte wählen Sie eine Kategorie');
-            return;
-        }
-        
-        if (!newName) {
-            alert('Bitte geben Sie einen Gerichtenamen ein');
-            return;
-        }
-        
-        if (!newRecipe) {
-            alert('Bitte geben Sie das Rezept ein');
-            return;
-        }
-        
-        const dish = appData.dishes.find(d => d.id === currentEditDishId);
-        if (dish) {
-            dish.groupId = newGroupId;
-            dish.name = newName;
-            dish.image = newImage;
-            dish.recipe = newRecipe;
-            saveData();
-        }
-        
-        document.getElementById('editDishCard').style.display = 'none';
-        document.getElementById('editDishName').value = '';
-        document.getElementById('editDishImage').value = '';
-        document.getElementById('editDishRecipe').value = '';
-        currentEditDishId = null;
-    });
-}
-
-const cancelDishEditBtn = document.getElementById('cancelDishEditBtn');
-if (cancelDishEditBtn) {
-    cancelDishEditBtn.addEventListener('click', () => {
-        document.getElementById('editDishCard').style.display = 'none';
-        document.getElementById('editDishName').value = '';
-        document.getElementById('editDishImage').value = '';
-        document.getElementById('editDishRecipe').value = '';
-        currentEditDishId = null;
-    });
-}
-
-// ============================================
-// Delete Dish
-// ============================================
-window.deleteDish = function(id) {
-    const dish = appData.dishes.find(d => d.id === id);
-    if (confirm(`Möchten Sie "${dish.name}" wirklich löschen?`)) {
-        appData.dishes = appData.dishes.filter(d => d.id !== id);
-        saveData();
-        
-        if (currentEditDishId === id) {
-            document.getElementById('editDishCard').style.display = 'none';
-            document.getElementById('editDishName').value = '';
-            document.getElementById('editDishImage').value = '';
-            document.getElementById('editDishRecipe').value = '';
-            currentEditDishId = null;
-        }
-    }
-};
-
-// ============================================
-// Initialize
-// ============================================
-updateGroupSelect();
-updateEditGroupSelect();
-renderDishesList();
+    </script>
+</body>
+</html>
