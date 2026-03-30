@@ -552,4 +552,14 @@ body {
   .modal-recipe {
     font-size: 1rem;
   }
+  /* FORCE LEFT-TO-RIGHT FOR GERMAN TEXT */
+.modal-recipe-section,
+.modal-title,
+.modal-content,
+.recipe-text,
+.modal-recipe {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: embed !important;
+}
 }
