@@ -319,7 +319,7 @@ body {
 
 .modal-title {
   font-size: 2rem;
-text-align: right;
+text-align: left;
   color: #d4af37;
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
@@ -334,6 +334,7 @@ text-align: right;
   line-height: 1.8;
   white-space: pre-wrap;
   color: #e8e6e3;
+text-align: left;
 }
 
 .close-modal {
