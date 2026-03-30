@@ -159,7 +159,7 @@ body {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
-  text-align: right;
+  text-align: left;
   font-size: 1rem;
   color: #fff;
   font-weight: 500;
