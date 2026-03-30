@@ -276,3 +276,86 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGroups();
     renderDishes();
 });
+// ============================================
+// Image Picker - Select image from device
+// ============================================
+
+// Create hidden file input
+const fileInput = document.createElement('input');
+fileInput.type = 'file';
+fileInput.accept = 'image/*';
+fileInput.style.display = 'none';
+document.body.appendChild(fileInput);
+
+// Function to get file path
+function getFilePath(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Create a temporary URL
+            const tempUrl = URL.createObjectURL(file);
+            // For local files, we need to get the full path
+            // On Android, we can use file:// URI
+            if (window.isSecureContext) {
+                // Use file API to get path
+                resolve(tempUrl);
+            } else {
+                resolve(tempUrl);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Function to get Android file path
+function getAndroidFilePath(file) {
+    // On Android, files are stored in /storage/emulated/0/
+    // We need to construct the path from the file name
+    const fileName = file.name;
+    const lastModified = file.lastModified;
+    
+    // Ask user where the file is located
+    const path = prompt(
+        "Bitte geben Sie den Pfad zur Bilddatei ein:\n" +
+        "Beispiel: /storage/emulated/0/Pictures/PrimelRezepte/stracciatella.jpg\n\n" +
+        "Oder klicken Sie OK, um den Dateinamen zu verwenden:",
+        "/storage/emulated/0/Pictures/PrimelRezepte/" + fileName
+    );
+    
+    return path ? path : "file://" + path;
+}
+
+// Select image button for new dish
+const selectImageBtn = document.getElementById('selectImageBtn');
+if (selectImageBtn) {
+    selectImageBtn.addEventListener('click', () => {
+        fileInput.click();
+        
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Get the file path
+                const path = getAndroidFilePath(file);
+                document.getElementById('dishImage').value = path;
+            }
+            fileInput.value = ''; // Reset input
+        };
+    });
+}
+
+// Select image button for edit dish
+const editSelectImageBtn = document.getElementById('editSelectImageBtn');
+if (editSelectImageBtn) {
+    editSelectImageBtn.addEventListener('click', () => {
+        fileInput.click();
+        
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const path = getAndroidFilePath(file);
+                document.getElementById('editDishImage').value = path;
+            }
+            fileInput.value = '';
+        };
+    });
+}
