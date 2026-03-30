@@ -250,13 +250,6 @@ window.deleteDish = function(id) {
         }
     }
 };
-
-// ============================================
-// Initialize
-// ============================================
-updateGroupSelect();
-updateEditGroupSelect();
-renderDishesList();
 // ============================================
 // Image Picker - Select image from device
 // ============================================
@@ -340,3 +333,10 @@ if (editSelectImageBtn) {
         };
     });
 }
+
+// ============================================
+// Initialize
+// ============================================
+updateGroupSelect();
+updateEditGroupSelect();
+renderDishesList();
